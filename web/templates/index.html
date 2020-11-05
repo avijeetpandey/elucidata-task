@@ -1,16 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Latest compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
     <title>Elucidata Flask Application</title>
-</head>
-<body>
-    <h1>Elucidata Task - Web Development</h1>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="file"/>
-        <button type="submit">Upload File</button>
-    </form>
-</body>
+  </head>
+  <body>
+
+
+
+    <div class="container text-center">
+        <h1>Elucidata Task - Web Development</h1>
+        <img src="assets/hello.png" alt="image" height="400px" />
+        <div class="row">
+            <div class="col-lg-4 col-lg-offset-4">
+                <div class="input-group">
+                    <form  method="POST" action="/upload" enctype="multipart/form-data">
+                        <div class="form-group">
+                          <label for="fileUpload">Please Upload The File Here</label>
+                          <input type="file" class="form-control" id="fileUpload" aria-describedby="file" name="file" placeholder="Click to choose">
+                        </div>
+                        <span><button type="submit" class="btn btn-primary">Submit</button></span>
+                      </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
 </html>
