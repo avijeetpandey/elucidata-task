@@ -1,10 +1,16 @@
+import os
+
 from flask import Flask , request 
 from flask import render_template
 
 from werkzeug.utils import secure_filename
 
+# defining folder configuration for uploaded data
+UPLOAD_FOLDER='uploads/'
+
 # creating the flask application named app
 app=Flask(__name__,static_url_path='',static_folder='web/static',template_folder='web/templates')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # intial route when server is hit first
 @app.route('/')
@@ -22,8 +28,8 @@ def upload():
         file = request.files['file']
         if file :
             fileName = secure_filename(file.filename)
-            print(fileName)
-            return fileName
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],fileName))
+            return "File Uploaded Succesfully"
 
 # running the application
 app.run(debug=True)

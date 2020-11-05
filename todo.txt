@@ -1,0 +1,3 @@
+1. Extract PC LPC and plasmogen -> create seperate datasets for each file
+2. New column to parent dataset Retention time Roundoff (roundoff renetention time)
+3. Find mean of metabolites having same retention time 
