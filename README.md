@@ -27,9 +27,9 @@ This will spin up a flask server
 
 ## API endpoints :muscle:
 
-- **/** : home of the application where user can upload the file 
-- **/filter** : This end point filter based **LPC,PC,Plasmalogen** and returns user a zip file containing the output
-- **/retention** : This endpoint rounds of the Times and returns a csv file which contains mean of the column as specified
+- [ ] **/ :** home of the application where user can upload the file 
+- [ ] **/filter :** This end point filter based **LPC,PC,Plasmalogen** and returns user a zip file containing the output **(Task 1)**
+- [ ] **/retention :** This endpoint rounds of the Times and returns a csv file which contains mean of the column as specified **(Task 2 and 3)**
 
 
 ## UI of the application 
