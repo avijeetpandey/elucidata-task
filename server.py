@@ -1,8 +1,11 @@
 import os
-from flask import Flask, request , jsonify , make_response 
+from flask import Flask, request , jsonify , make_response , send_file 
 from flask import render_template
 from werkzeug.utils import secure_filename
 import pandas as pd
+
+from zipfile import ZipFile
+import io
 
 # defining folder configuration for uploaded data
 UPLOAD_FOLDER = 'uploads/'
@@ -42,28 +45,36 @@ def filter():
     # creating the dataframe
     df = pd.read_excel('uploads/mass_spec_data_assgnmnt.xlsx.xlsx')
     # creating the child dataset for PC
-    pc_dataset = df[df['Accepted Compound ID'].str.contains(r'\bPC\b', na=False)]
-    # creating the child dataset for LPC
-    lpc_dataset = df[df['Accepted Compound ID'].str.contains(r'\bLPC\b', na=False)]
-    # creating the child dataset for plasmalogen
-    plasmogen_dataset = df[df['Accepted Compound ID'].str.contains(r'\bplasmalogen\b', na=False)]
-  
-    # row counts of the datasets 
-    pc_row = pc_dataset.shape[0]
-    lpc_row = lpc_dataset.shape[0]
-    plasmogen_row = plasmogen_dataset.shape[0]
-
-    # creating suitable response to be return back to the client
-    response = make_response(
-        jsonify({
-            "PC count" : pc_row,
-            "LPC count" : lpc_row,
-            "Plasmogent count" : plasmogen_row
-        })
-    )
-    response.headers["Content-Type"] = "application/json"
+    pc_dataset =df[(df['Accepted Compound ID'].str.endswith('PC',na=False)) & (df['Accepted Compound ID'].str[-3]!='L')]
+    pc_dataset.to_csv('PC.csv',index=False)
     
-    return response
+    # creating the child dataset for LPC
+    lpc_dataset =df[df['Accepted Compound ID'].str.endswith('LPC',na=False)]
+    lpc_dataset.to_csv('LPC.csv',index=False)
+    
+    # creating the child dataset for plasmalogen
+    plasmalogen_dataset = df[df['Accepted Compound ID'].str.endswith('plasmalogen',na=False)]
+    plasmalogen_dataset.to_csv('Plasmalogen.csv',index=False)
+    
+    # creating zip file for user to download after filtering
+    download_zipfile_list = ['PC.csv','LPC.csv','Plasmalogen.csv']
+    
+    download_file=io.BytesIO()
+    
+    zip_file = ZipFile('Processed.zip','w')
+    zip_file.write('PC.csv')
+    zip_file.write('LPC.csv')
+    zip_file.write('Plasmalogen.csv') 
+    
+    zip_file.close()   
+    
+    os.remove('PC.csv')
+    os.remove('LPC.csv')
+    os.remove('Plasmalogen.csv')
+    
+    return send_file('./Processed.zip',
+                     attachment_filename='Processed.zip',
+                     as_attachment=True)
 
 
 # API endpoint for Retention time roundoff and mean calculation
@@ -79,15 +90,21 @@ def retention_time():
     for i in range(len(df)):
         retention_time_roundoff[i]= int(round(df['Retention time (min)'][i]))
     
-    df.insert(1,'Retention Time Roundoff (in mins)',retention_time_roundoff)
+    df.insert(2,'Retention Time Roundoff (in mins)',retention_time_roundoff)
     
-    response = make_response(
-        jsonify({
-            "message" : "Data Frame Added Succesfully and rounded off "
-        })
-    )
+    # deleting unwanted data columns
+    del df['m/z']
+    del df['Retention time (min)']
     
-    return response
+    # creating new dataframe
+    new_data_frame = df.groupby(df['Retention Time Roundoff (in mins)']).mean()
+    
+    new_data_frame.to_csv('Mean.csv')
+    
+    return send_file('./Mean.csv',
+                     mimetype='text/csv',
+                     attachment_filename='Mean.csv',
+                     as_attachment=True)
 
 # running the application
 app.run(debug=True)
