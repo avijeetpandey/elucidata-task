@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
     <title>Elucidata Flask Application</title>
 </head>
 <body>
-    <p>Hello from flask</p>
+    <h1>Elucidata Task - Web Development</h1>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <button type="submit">Upload File</button>
+    </form>
 </body>
 </html>
