@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request , jsonify , make_response
+from flask import Flask, request , jsonify , make_response 
 from flask import render_template
 from werkzeug.utils import secure_filename
 import pandas as pd
@@ -29,6 +29,9 @@ def upload():
         file = request.files['file']
         if file:
             fileName = secure_filename(file.filename)
+# checking if uploads folder exists or not
+            if not os.path.exists('uploads'):
+                os.makedirs('uploads')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], fileName))
             return "File Uploaded Succesfully"
 
@@ -44,7 +47,7 @@ def filter():
     lpc_dataset = df[df['Accepted Compound ID'].str.contains(r'\bLPC\b', na=False)]
 # creating the child dataset for plasmalogen
     plasmogen_dataset = df[df['Accepted Compound ID'].str.contains(r'\bplasmalogen\b', na=False)]
-    
+  
 # row counts of the datasets 
     pc_row = pc_dataset.shape[0]
     lpc_row = lpc_dataset.shape[0]
