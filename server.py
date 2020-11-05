@@ -29,7 +29,7 @@ def upload():
         file = request.files['file']
         if file:
             fileName = secure_filename(file.filename)
-# checking if uploads folder exists or not
+            # checking if uploads folder exists or not
             if not os.path.exists('uploads'):
                 os.makedirs('uploads')
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], fileName))
@@ -39,21 +39,21 @@ def upload():
 # API endpoint to filter the file compound id
 @app.route('/filter', methods=['GET'])
 def filter():
-# creating the dataframe
+    # creating the dataframe
     df = pd.read_excel('uploads/mass_spec_data_assgnmnt.xlsx.xlsx')
-# creating the child dataset for PC
+    # creating the child dataset for PC
     pc_dataset = df[df['Accepted Compound ID'].str.contains(r'\bPC\b', na=False)]
-# creating the child dataset for LPC
+    # creating the child dataset for LPC
     lpc_dataset = df[df['Accepted Compound ID'].str.contains(r'\bLPC\b', na=False)]
-# creating the child dataset for plasmalogen
+    # creating the child dataset for plasmalogen
     plasmogen_dataset = df[df['Accepted Compound ID'].str.contains(r'\bplasmalogen\b', na=False)]
   
-# row counts of the datasets 
+    # row counts of the datasets 
     pc_row = pc_dataset.shape[0]
     lpc_row = lpc_dataset.shape[0]
     plasmogen_row = plasmogen_dataset.shape[0]
 
-# creating suitable response to be return back to the client
+    # creating suitable response to be return back to the client
     response = make_response(
         jsonify({
             "PC count" : pc_row,
@@ -62,6 +62,30 @@ def filter():
         })
     )
     response.headers["Content-Type"] = "application/json"
+    
+    return response
+
+
+# API endpoint for Retention time roundoff and mean calculation
+@app.route('/retention',methods=['GET'])
+def retention_time():
+    # parent dataframe
+    df = pd.read_excel('uploads/mass_spec_data_assgnmnt.xlsx.xlsx')
+    
+    # creating blank series (label)
+    retention_time_roundoff = pd.Series([],dtype='int64')
+    
+    # iterating through the dataframe to round off the values to integer
+    for i in range(len(df)):
+        retention_time_roundoff[i]= int(round(df['Retention time (min)'][i]))
+    
+    df.insert(1,'Retention Time Roundoff (in mins)',retention_time_roundoff)
+    
+    response = make_response(
+        jsonify({
+            "message" : "Data Frame Added Succesfully and rounded off "
+        })
+    )
     
     return response
 
