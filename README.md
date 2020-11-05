@@ -10,9 +10,10 @@ I have developed the application using flask and python , the end user can uploa
 ## Setup project locally
 ```
 git clone https://github.com/avijeetpandey/elucidata-task.git
+
 cd elucidata-task
 
- pip install -r requirements.txt
+pip install -r requirements.txt
 
 python server.py
 
